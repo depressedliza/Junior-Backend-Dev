@@ -1,14 +1,16 @@
+import { AddBookDto } from './dto/add-book.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Book } from 'src/books/books.entity';
 
 @Injectable()
 export class UsersService {
     
-    constructor(@InjectRepository(User) private userRepository: Repository<User>) {
+    constructor(@InjectRepository(User) private userRepository: Repository<User>, @InjectRepository(Book) private bookRepository: Repository<Book>) {
 
     }
 
@@ -40,10 +42,24 @@ export class UsersService {
 
     async getSubscription(id: number): Promise<string> {
         const user = await this.getUser(id);
-        if (!user) return 'Возникла ошибка'
+        if (!user) return 'Данный пользователь не найден!'
 
         user.isSub = true;
         await this.userRepository.update(id, user);
         return 'Абонемент успешно получен!'
+    }
+
+    async addBookToUser(data: AddBookDto): Promise<string> {
+        const userBooks = await this.bookRepository.find({where: {existence: data.userId}});
+        if (userBooks.length == 5) return 'Пользователь не может иметь больше 5-ти книг одновременно!'
+        if (!data.bookId) return 'Данная книга не найдена!'
+
+        const book = await this.bookRepository.findOne(data.bookId)
+        if (book.existence == 0) {
+            book.existence = data.userId
+            await this.bookRepository.update(book.id, book)
+            return 'Успешно!'
+        }
+        return "Данная книга уже используется"
     }
 }

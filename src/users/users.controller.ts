@@ -1,3 +1,4 @@
+import { AddBookDto } from './dto/add-book.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './users.entity';
 import { UsersService } from './users.service';
@@ -51,6 +52,11 @@ export class UsersController {
     @Put(':id/sub')
     async getSubscription(@Param('id') id: number): Promise<string>{
         return this.usersService.getSubscription(id);
+    }
+
+    @Put('/add-book')
+    async addBookToUser(@Body() data: AddBookDto): Promise<string>{
+        return this.usersService.addBookToUser(data)
     }
     
 }
