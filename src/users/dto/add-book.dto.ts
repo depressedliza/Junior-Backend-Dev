@@ -1,4 +1,4 @@
 export class AddBookDto  {
-    userId: number;
-    bookId: number;
+    readonly userId: number;
+    readonly bookId: number;
 }

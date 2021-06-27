@@ -1,9 +1,8 @@
 import { AddBookDto } from './dto/add-book.dto';
-
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.entity';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Book } from 'src/books/books.entity';
@@ -24,8 +23,10 @@ export class UsersService {
     }
 
     async getUser(id: number){
-        const user = this.userRepository.findOne(id, {relations: ["books"]})
-        if (!user) return 'Пользователь не найден!';
+        const user = await this.userRepository.find({
+            relations: ["books"],
+                where: {id}, take: 1});
+        if (Object.keys(user).length == 0) throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
         return user;
     }
 

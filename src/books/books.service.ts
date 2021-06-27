@@ -8,12 +8,14 @@ import { CreateBookDto } from './dto/create-book.dto';
 export class BooksService {
     constructor(@InjectRepository(Book) private bookRepository: Repository<Book>) {}
 
-    async createBook(book: CreateBookDto): Promise<Book> {
+    async createBook(book: CreateBookDto){
         return await this.bookRepository.save(book);
     }
 
-    async returnBook(bookId: number): Promise<string> {
-        // return await this.bookRepository.update(bookId, )
-        return
+    async returnBook(bookId: number){
+        const book = await this.bookRepository.findOne(bookId);
+        if (!book) return 'Ошибка книга не найдена';
+        book.existence = null;
+        return 'Успешно';
     }
 }

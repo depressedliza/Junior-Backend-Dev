@@ -12,13 +12,12 @@ export class BooksController {
     @ApiOperation({summary: 'Добавление книги'})
     @ApiResponse({status: 200, type: Book})
     @Post()
-    async create(@Body() bookDto: CreateBookDto): Promise<Book>{
+    async create(@Body() bookDto: CreateBookDto){
         return this.booksService.createBook(bookDto)
     }
     
     @Put(':id/return')
-    async returnBook(@Param('id') id: number): Promise<string>{
-        return
+    async returnBook(@Param('id') id: number){
+        return this.booksService.returnBook(id);
     }
-    // @Put(':id/')
 }

@@ -4,7 +4,7 @@ import { User } from './users.entity';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOperation, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiProperty, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Работа с пользователями')
 @Controller('users')
@@ -15,7 +15,7 @@ export class UsersController {
     @ApiOperation({summary: 'Создание пользователя'})
     @ApiResponse({status: 200, type: User})
     @Post()
-    async create(@Body() userDto: CreateUserDto): Promise<User>{
+    async create(@Body() userDto: CreateUserDto){
         return  this.usersService.createUser(userDto)
     }
 
@@ -29,33 +29,33 @@ export class UsersController {
     @ApiOperation({summary: 'Получение конкретного пользователя по id'})
     @ApiResponse({status: 200, type: User})
     @Get(':id')
-    async getUser(@Param('id') id: number): Promise<any>{
+    async getUser(@Param('id') id: number){
         return this.usersService.getUser(id)
     }
 
     @ApiOperation({summary: 'Удаление пользователя по id'})
     @ApiResponse({status: 200, type: String})
     @Delete(':id/delete')
-    async deleteUser(@Param('id') id: number): Promise<string>{
+    async deleteUser(@Param('id') id: number){
         return this.usersService.deleteUser(id)
     }
 
     @ApiOperation({summary: 'Обновление данных пользователя'})
     @ApiResponse({status: 200, type: String})
     @Put()
-    async updateUser(@Body() userData: UpdateUserDto): Promise<string>{
+    async updateUser(@Body() userData: UpdateUserDto){
         return this.usersService.updateUser(userData)
     }
 
     @ApiOperation({summary: 'Выдача абонемента пользователю'})
     @ApiResponse({status: 200, type: String})
     @Put(':id/sub')
-    async getSubscription(@Param('id') id: number): Promise<string>{
+    async getSubscription(@Param('id') id: number){
         return this.usersService.getSubscription(id);
     }
 
     @Put('/add-book')
-    async addBookToUser(@Body() data: AddBookDto): Promise<any>{
+    async addBookToUser(@Body() data: AddBookDto){
         return this.usersService.addBookToUser(data)
     }
     
