@@ -25,42 +25,44 @@ export class UsersService {
     async getUser(id: number){
         const user = await this.userRepository.find({
             relations: ["books"],
-                where: {id}, take: 1});
+            where: {id}, take: 1});
         if (Object.keys(user).length == 0) throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
         return user;
     }
 
     async deleteUser(id: number){
         const deleteUser = await this.userRepository.delete(id);
-        if (deleteUser.affected) return 'Пользователь успешно удален!'
-        return 'Возникла ошибка'
+        if (deleteUser.affected) return new HttpException('Пользователь удален', HttpStatus.OK);
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
     async updateUser(user: UpdateUserDto){
         const updateUser = await this.userRepository.update(user.id, user);
-        if (updateUser.affected) return 'Данные пользователя успешно обновлены!'
-        return 'Возникла ошибка'
+        if (updateUser.affected) return new HttpException('Данные обновлены', HttpStatus.OK);
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
     async getSubscription(id: number){
         const user = await this.userRepository.findOne(id);
-        if (!user) return 'Данный пользователь не найден!'
+        if (!user) throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
 
         user.isSub = true;
         await this.userRepository.update(id, user);
-        return 'Абонемент успешно получен!'
+        return new HttpException('Абонемент добавлен', HttpStatus.OK);
     }
 
     async addBookToUser(data: AddBookDto){
-        const user = await this.userRepository.findOne(data.userId);
-        const book = await this.bookRepository.findOne(data.bookId);
-        if(!user || !book) return 'Ошибку';
-        if (book.existence) return 'Книга уже используется!';
-        if (!user.isSub) return 'Для получение книги необходимо иметь абонемент!'
+        const user = await this.userRepository.findOne(data.userId, {relations: ["books"]});
+        const book = await this.bookRepository.findOne(data.bookId, {relations: ["existence"]});
+
+        if (!user || !book) throw new HttpException('Пользователь или книга не найдены', HttpStatus.NOT_FOUND);
+        if (book.existence) throw new HttpException('Книги нет в наличие', HttpStatus.CONFLICT);
+        if (!user.isSub) throw new HttpException('Для получения книги необходим абонемент', HttpStatus.CONFLICT);
+        if (user.books.length == 5) throw new HttpException('Превышен лимит книг на аккаунте', HttpStatus.CONFLICT);
 
         book.existence = user;
         await this.bookRepository.update(book.id, book);
-        return 'Успешно!'
+        return new HttpException('Книга добавлена на аккаунт', HttpStatus.OK);
     }
     
 }
