@@ -20,8 +20,10 @@ export class UsersService {
         return await this.userRepository.find();
     }
 
-    async getUser(id: number): Promise<User> {
-        return await this.userRepository.findOne(id);
+    async getUser(id: number): Promise<any> {
+        // const user = await this.userRepository.findOne(id);
+        // const booksUser = await this.getUserBooks(id);
+        // return Object.assign(user, booksUser);
     }
 
     async deleteUser(id: number): Promise<string> {

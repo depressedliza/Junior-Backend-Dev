@@ -28,7 +28,7 @@ export class UsersController {
     @ApiOperation({summary: 'Получение конкретного пользователя по id'})
     @ApiResponse({status: 200, type: User})
     @Get(':id')
-    async getUser(@Param('id') id: number): Promise<User>{
+    async getUser(@Param('id') id: number): Promise<any>{
         return this.usersService.getUser(id)
     }
 

@@ -24,6 +24,6 @@ export class User implements UserCreationAttrs {
 
     @ApiProperty({example: '0', description: 'Наличие абонемента'})
     @Column({ default: false })
-    isSub: boolean; 
+    isSub: boolean;
 
 }
