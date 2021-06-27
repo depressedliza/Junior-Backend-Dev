@@ -1,7 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+interface UserCreationAttrs {
+    id: number;
+    name: string;
+    email: string;
+    isSub: boolean;
+}
+
 @Entity()
-export class User {
+export class User implements UserCreationAttrs {
   @PrimaryGeneratedColumn()
   id: number;
 
