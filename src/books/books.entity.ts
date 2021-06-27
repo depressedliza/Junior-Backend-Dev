@@ -24,6 +24,6 @@ export class Book implements BookCreationAttrs {
     author: string;
     
     @ApiProperty({example: '0', description: 'Число указывающие местонахождение книги. Если 0 - в библиотеке, если отличное от 0, то у юзера с id равным этому числу'})
-    @Column("int")
+    @Column("int", {default: false})
     existence: number;
 }
