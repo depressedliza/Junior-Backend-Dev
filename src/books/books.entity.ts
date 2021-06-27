@@ -1,12 +1,13 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/users/users.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 interface BookCreationAttrs {
     id: number;
     nameBook: string;
     author: string;
-    existence: number;
+    existence: User;
 }
 
 @Entity()
@@ -23,7 +24,6 @@ export class Book implements BookCreationAttrs {
     @Column("varchar", {length: 20})
     author: string;
     
-    @ApiProperty({example: '0', description: 'Число указывающие местонахождение книги. Если 0 - в библиотеке, если отличное от 0, то у юзера с id равным этому числу'})
-    @Column("int", {default: false})
-    existence: number;
+    @ManyToOne(type => User, user => user.books)
+    existence: User;
 }

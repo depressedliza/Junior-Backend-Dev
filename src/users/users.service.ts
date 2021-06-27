@@ -1,4 +1,5 @@
 import { AddBookDto } from './dto/add-book.dto';
+
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './users.entity';
@@ -14,34 +15,34 @@ export class UsersService {
 
     }
 
-    async createUser(user: CreateUserDto): Promise<User> {
+    async createUser(user: CreateUserDto){
         return await this.userRepository.save(user);
     }
 
-    async getAllUsers(): Promise<User[]> {
+    async getAllUsers(){
         return await this.userRepository.find();
     }
 
-    async getUser(id: number): Promise<any> {
-        // const user = await this.userRepository.findOne(id);
-        // const booksUser = await this.getUserBooks(id);
-        // return Object.assign(user, booksUser);
+    async getUser(id: number){
+        const user = this.userRepository.findOne(id, {relations: ["books"]})
+        if (!user) return 'Пользователь не найден!';
+        return user;
     }
 
-    async deleteUser(id: number): Promise<string> {
+    async deleteUser(id: number){
         const deleteUser = await this.userRepository.delete(id);
         if (deleteUser.affected) return 'Пользователь успешно удален!'
         return 'Возникла ошибка'
     }
 
-    async updateUser(user: UpdateUserDto): Promise<string> {
+    async updateUser(user: UpdateUserDto){
         const updateUser = await this.userRepository.update(user.id, user);
         if (updateUser.affected) return 'Данные пользователя успешно обновлены!'
         return 'Возникла ошибка'
     }
 
-    async getSubscription(id: number): Promise<string> {
-        const user = await this.getUser(id);
+    async getSubscription(id: number){
+        const user = await this.userRepository.findOne(id);
         if (!user) return 'Данный пользователь не найден!'
 
         user.isSub = true;
@@ -49,17 +50,16 @@ export class UsersService {
         return 'Абонемент успешно получен!'
     }
 
-    async addBookToUser(data: AddBookDto): Promise<string> {
-        const userBooks = await this.bookRepository.find({where: {existence: data.userId}});
-        if (userBooks.length == 5) return 'Пользователь не может иметь больше 5-ти книг одновременно!'
-        if (!data.bookId) return 'Данная книга не найдена!'
+    async addBookToUser(data: AddBookDto){
+        const user = await this.userRepository.findOne(data.userId);
+        const book = await this.bookRepository.findOne(data.bookId);
+        if(!user || !book) return 'Ошибку';
+        if (book.existence) return 'Книга уже используется!';
+        if (!user.isSub) return 'Для получение книги необходимо иметь абонемент!'
 
-        const book = await this.bookRepository.findOne(data.bookId)
-        if (book.existence == 0) {
-            book.existence = data.userId
-            await this.bookRepository.update(book.id, book)
-            return 'Успешно!'
-        }
-        return "Данная книга уже используется"
+        book.existence = user;
+        await this.bookRepository.update(book.id, book);
+        return 'Успешно!'
     }
+    
 }

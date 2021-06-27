@@ -1,5 +1,5 @@
 import { BooksService } from './books.service';
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateBookDto } from './dto/create-book.dto';
 import { Book } from './books.entity';
@@ -15,6 +15,10 @@ export class BooksController {
     async create(@Body() bookDto: CreateBookDto): Promise<Book>{
         return this.booksService.createBook(bookDto)
     }
-
+    
+    @Put(':id/return')
+    async returnBook(@Param('id') id: number): Promise<string>{
+        return
+    }
     // @Put(':id/')
 }

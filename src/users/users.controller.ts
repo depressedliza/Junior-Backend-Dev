@@ -55,7 +55,7 @@ export class UsersController {
     }
 
     @Put('/add-book')
-    async addBookToUser(@Body() data: AddBookDto): Promise<string>{
+    async addBookToUser(@Body() data: AddBookDto): Promise<any>{
         return this.usersService.addBookToUser(data)
     }
     

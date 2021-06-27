@@ -1,11 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Book } from 'src/books/books.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 interface UserCreationAttrs {
     id: number;
     name: string;
     email: string;
     isSub: boolean;
+    books: Book[];
 }
 
 @Entity()
@@ -26,4 +28,6 @@ export class User implements UserCreationAttrs {
     @Column({ default: false })
     isSub: boolean;
 
+    @OneToMany(type => Book, book => book.existence)
+    books: Book[]
 }
