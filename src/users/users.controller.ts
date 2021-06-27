@@ -60,5 +60,4 @@ export class UsersController {
     async addBookToUser(@Body() data: AddBookDto){
         return this.usersService.addBookToUser(data)
     }
-    
 }
