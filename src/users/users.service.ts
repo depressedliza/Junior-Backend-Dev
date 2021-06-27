@@ -26,4 +26,10 @@ export class UsersService {
     async getUser (id: number): Promise<User> {
         return await this.userRepository.findOne(id);
     }
+
+    async deleteUser (id: number): Promise<any> {
+        const deleteUser = await this.userRepository.delete(id);
+        if (deleteUser.affected) return 'Пользователь успешно удален!'
+        return 'Возникла ошибка'
+    }
 }
